@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="icon" type="image/png" href="images/logo.png" />
+
+    <!-- CSS Libraries -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="css/qgis2web.css">
+    <link rel="stylesheet" href="css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Dashboard Kerentanan Tuberculosis</title>
+
+</head>
+
+<body>
+    <header>
+        <div class="logo-title">
+            <div class="logo"><img src="images/logo.png" alt="Logo STIS"></div>
+            <h1>Dashboard Kerentanan Tuberculosis</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">HOME</a></li>
+                <li><a href="#" class="active">DASHBOARD</a></li>
+                <li><a href="estimasi.html">ESTIMASI PREVALENSI</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div id="app-body">
+        <aside id="sidebar">
+            <div id="sidebar-content">
+                <ul id="custom-menu">
+                    <li>
+                        <a href="#" class="menu-toggle"><i class="fas fa-viruses"></i>Indeks Kerentanan TB</a>
+                        <ul class="sub-menu">
+                            <li><a href="#" data-type="RSTVI" data-level="Grid"><i class="fas fa-th-large"></i>Level
+                                    Grid</a></li>
+                            <li><a href="#" data-type="RSTVI" data-level="Lingkungan"><i
+                                        class="fas fa-leaf"></i>Komponen
+                                    Lingkungan</a></li>
+                            <li><a href="#" data-type="RSTVI" data-level="Sosial"><i class="fas fa-users"></i>Komponen
+                                    Sosial</a></li>
+                            <li><a href="#" data-type="RSTVI" data-level="Ekonomi"><i
+                                        class="fas fa-dollar-sign"></i>Komponen Ekonomi</a></li>
+                            <li><a href="#" data-type="RSTVI" data-level="Desa"><i class="fas fa-map-pin"></i>Level
+                                    Desa</a>
+                            </li>
+                            <li><a href="#" data-type="RSTVI" data-level="Kecamatan"><i class="fas fa-map"></i>Level
+                                    Kecamatan</a></li>
+                            <li><a href="#" data-type="RSTVI" data-level="Kabkot"><i class="fas fa-building"></i>Level
+                                    Kab/Kota</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#" class="menu-toggle"><i class="fas fa-head-side-cough"></i>Estimasi Prevalensi TB</a>
+                        <ul class="sub-menu">
+                            <li><a href="#" data-type="Estimasi" data-level="Grid"><i class="fas fa-th-large"></i>Level
+                                    Grid</a></li>
+                            <li><a href="#" data-type="Estimasi" data-level="Desa"><i class="fas fa-map-pin"></i>Level
+                                    Desa</a></li>
+                            <li><a href="#" data-type="Estimasi" data-level="Kecamatan"><i class="fas fa-map"></i>Level
+                                    Kecamatan</a></li>
+                            <li><a href="#" data-type="Estimasi" data-level="Kabkot"><i
+                                        class="fas fa-building"></i>Level
+                                    Kab/Kota</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <main id="main-content">
+            <div class="view-tabs">
+                <button class="tab-link active" data-view="map">Peta</button>
+                <button class="tab-link" data-view="data">Data</button>
+            </div>
+
+            <div id="map-container" class="view-content active">
+                <div id="content-wrapper">
+                    <button id="sidebar-toggle">&#9664;</button>
+                    <div id="map">
+                        <div id="map-header" class="floating-panel">
+                            <div id="map-title">Silakan Pilih Layer dari Menu</div>
+                            <select id="year-selector">
+                                <option value="2023">2023</option>
+                                <option value="2022">2022</option>
+                                <option value="2021">2021</option>
+                                <option value="2020">2020</option>
+                                <option value="2019">2019</option>
+                                <option value="2018">2018</option>
+                            </select>
+                        </div>
+                        <button id="info-toggle" title="Tampilkan Info"><i class="fa fa-info"></i></button>
+                        <div id="info-panel" class="floating-panel hidden">
+                            <div id="info-panel-header">
+                                <h3>Informasi Layer</h3><button id="info-panel-close" title="Tutup">&times;</button>
+                            </div>
+                            <div id="info-panel-content">
+                                <div class="info-section" id="legend-section">
+                                    <div id="legend-content"></div>
+                                </div>
+                                <div class="info-section" id="stats-section">
+                                    <h4>Statistik</h4>
+                                    <div id="stats-content"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="data-container" class="view-content">
+                <div class="table-toolbar">
+                    <button id="download-excel-btn"><i class="fas fa-download"></i> Download Excel</button>
+                    <input type="text" id="search-input" placeholder="Cari data dalam tabel...">
+                </div>
+                <div class="table-wrapper">
+                    <table id="data-table">
+                        <thead></thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="5" style="text-align:center; padding: 20px;">Silakan pilih layer dari menu
+                                    untuk menampilkan data.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="js/qgis2web_expressions.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/L.Control.Layers.Tree.min.js"></script>
+    <script src="js/leaflet.pattern.js"></script>
+    <script src="js/leaflet-hash.js"></script>
+    <script src="js/Autolinker.min.js"></script>
+    <script src="js/rbush.min.js"></script>
+    <script src="js/labelgun.min.js"></script>
+    <script src="js/labels.js"></script>
+    <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+
+    <!-- Data Files -->
+    <script src="data/EstimasiPrevalensiTBKabkot2023_1.js"></script>
+    <script src="data/EstimasiPrevalensiTBKecamatan2023_7.js"></script>
+    <script src="data/EstimasiPrevalensiTBDesa2023_13.js"></script>
+    <script src="data/EstimasiPrevalensiTB2023_19.js"></script>
+    <script src="data/RSTVI_Kabkot_2023_25.js"></script>
+    <script src="data/RSTVI_Kecamatan_2023_31.js"></script>
+    <script src="data/Desa_RSTVI_2023_37.js"></script>
+    <script src="data/RSTVIKomponenEkonomi2023_43.js"></script>
+    <script src="data/RSTVIKomponenSosial2023_49.js"></script>
+    <script src="data/RSTVIKomponenLingkunganFisik2023_55.js"></script>
+    <script src="data/RSTVIIndeksKerentananTB2023_61.js"></script>
+    <script src="data/yogyakarta_67.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // 1. Inisialisasi Peta
+            const map = L.map('map', {
+                zoomControl: false,
+                maxZoom: 28,
+                minZoom: 1
+            }).setView([-7.79, 110.36], 10);
+            L.control.zoom({ position: 'topleft' }).addTo(map);
+            new L.Control.Geocoder({ position: 'topleft', collapsed: true, placeholder: 'Cari lokasi...' }).addTo(map);
+            const autolinker = new Autolinker({ truncate: { length: 30, location: 'smart' } });
+            document.querySelector('.leaflet-control-geocoder-icon').className += ' fa fa-search';
+            document.querySelector('.leaflet-control-geocoder-icon').title = 'Cari Lokasi';
+
+            L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+                opacity: 1.0,
+                attribution: '<a href="https://www.google.com/permissions/geoguidelines/attr-guide.html">Map data ©2015 Google</a>',
+            }).addTo(map);
+
+            const batasYogyakarta = L.geoJson(json_yogyakarta_67, {
+                style: { color: '#333333', weight: 1.5, fill: false, dashArray: '4, 4' },
+                interactive: false
+            }).addTo(map);
+
+            // 2. State Management & Variabel Global
+            let currentState = { type: null, level: null, year: '2023' };
+            let activeLayer = null;
+            let activeMenuItem = null;
+            let currentFeatures = [];
+            const dataRegistry = {
+                'RSTVI': {
+                    'Grid': {
+                        '2023': window.json_RSTVIIndeksKerentananTB2023_61,
+                        '2022': window.json_RSTVIIndeksKerentananTB2023_61,
+                        '2021': window.json_RSTVIIndeksKerentananTB2023_61,
+                        '2020': window.json_RSTVIIndeksKerentananTB2023_61,
+                        '2019': window.json_RSTVIIndeksKerentananTB2023_61,
+                        '2018': window.json_RSTVIIndeksKerentananTB2023_61
+                    },
+                    'Lingkungan': {
+                        '2023': window.json_RSTVIKomponenLingkunganFisik2023_55,
+                        '2022': window.json_RSTVIKomponenLingkunganFisik2023_55,
+                        '2021': window.json_RSTVIKomponenLingkunganFisik2023_55,
+                        '2020': window.json_RSTVIKomponenLingkunganFisik2023_55,
+                        '2019': window.json_RSTVIKomponenLingkunganFisik2023_55,
+                        '2018': window.json_RSTVIKomponenLingkunganFisik2023_55
+                    },
+                    'Sosial': {
+                        '2023': window.json_RSTVIKomponenSosial2023_49,
+                        '2022': window.json_RSTVIKomponenSosial2023_49,
+                        '2021': window.json_RSTVIKomponenSosial2023_49,
+                        '2020': window.json_RSTVIKomponenSosial2023_49,
+                        '2019': window.json_RSTVIKomponenSosial2023_49,
+                        '2018': window.json_RSTVIKomponenSosial2023_49
+                    },
+                    'Ekonomi': {
+                        '2023': window.json_RSTVIKomponenEkonomi2023_43,
+                        '2022': window.json_RSTVIKomponenEkonomi2023_43,
+                        '2021': window.json_RSTVIKomponenEkonomi2023_43,
+                        '2020': window.json_RSTVIKomponenEkonomi2023_43,
+                        '2019': window.json_RSTVIKomponenEkonomi2023_43,
+                        '2018': window.json_RSTVIKomponenEkonomi2023_43
+                    },
+                    'Desa': {
+                        '2023': window.json_Desa_RSTVI_2023_37,
+                        '2022': window.json_Desa_RSTVI_2023_37,
+                        '2021': window.json_Desa_RSTVI_2023_37,
+                        '2020': window.json_Desa_RSTVI_2023_37,
+                        '2019': window.json_Desa_RSTVI_2023_37,
+                        '2018': window.json_Desa_RSTVI_2023_37
+                    },
+                    'Kecamatan': {
+                        '2023': window.json_RSTVI_Kecamatan_2023_31,
+                        '2022': window.json_RSTVI_Kecamatan_2023_31,
+                        '2021': window.json_RSTVI_Kecamatan_2023_31,
+                        '2020': window.json_RSTVI_Kecamatan_2023_31,
+                        '2019': window.json_RSTVI_Kecamatan_2023_31,
+                        '2018': window.json_RSTVI_Kecamatan_2023_31
+                    },
+                    'Kabkot': {
+                        '2023': window.json_RSTVI_Kabkot_2023_25,
+                        '2022': window.json_RSTVI_Kabkot_2023_25,
+                        '2021': window.json_RSTVI_Kabkot_2023_25,
+                        '2020': window.json_RSTVI_Kabkot_2023_25,
+                        '2019': window.json_RSTVI_Kabkot_2023_25,
+                        '2018': window.json_RSTVI_Kabkot_2023_25
+                    }
+                },
+                'Estimasi': {
+                    'Grid': {
+                        '2023': window.json_EstimasiPrevalensiTB2023_19,
+                        '2022': window.json_EstimasiPrevalensiTB2023_19,
+                        '2021': window.json_EstimasiPrevalensiTB2023_19,
+                        '2020': window.json_EstimasiPrevalensiTB2023_19,
+                        '2019': window.json_EstimasiPrevalensiTB2023_19,
+                        '2018': window.json_EstimasiPrevalensiTB2023_19
+                    },
+                    'Desa': {
+                        '2023': window.json_EstimasiPrevalensiTBDesa2023_13,
+                        '2022': window.json_EstimasiPrevalensiTBDesa2023_13,
+                        '2021': window.json_EstimasiPrevalensiTBDesa2023_13,
+                        '2020': window.json_EstimasiPrevalensiTBDesa2023_13,
+                        '2019': window.json_EstimasiPrevalensiTBDesa2023_13,
+                        '2018': window.json_EstimasiPrevalensiTBDesa2023_13
+                    },
+                    'Kecamatan': {
+                        '2023': window.json_EstimasiPrevalensiTBKecamatan2023_7,
+                        '2022': window.json_EstimasiPrevalensiTBKecamatan2023_7,
+                        '2021': window.json_EstimasiPrevalensiTBKecamatan2023_7,
+                        '2020': window.json_EstimasiPrevalensiTBKecamatan2023_7,
+                        '2019': window.json_EstimasiPrevalensiTBKecamatan2023_7,
+                        '2018': window.json_EstimasiPrevalensiTBKecamatan2023_7
+                    },
+                    'Kabkot': {
+                        '2023': window.json_EstimasiPrevalensiTBKabkot2023_1,
+                        '2022': window.json_EstimasiPrevalensiTBKabkot2023_1,
+                        '2021': window.json_EstimasiPrevalensiTBKabkot2023_1,
+                        '2020': window.json_EstimasiPrevalensiTBKabkot2023_1,
+                        '2019': window.json_EstimasiPrevalensiTBKabkot2023_1,
+                        '2018': window.json_EstimasiPrevalensiTBKabkot2023_1
+                    }
+                }
+            };
+            const tableColumnConfig = {
+                'RSTVI-Grid': [{ key: 'id', label: 'ID' }, { key: 'kecamatan', label: 'Kecamatan' }, { key: 'kabkot', label: 'Kab/Kota' }, { key: 'VALUE', label: 'Indeks' }, { key: 'kategori', label: 'Kategori' }],
+                'RSTVI-Lingkungan': [{ key: 'id', label: 'ID' }, { key: 'kecamatan', label: 'Kecamatan' }, { key: 'kabkot', label: 'Kab/Kota' }, { key: 'VALUE', label: 'Indeks Lingkungan' }, { key: 'kategori', label: 'Kategori' }],
+                'RSTVI-Sosial': [{ key: 'id', label: 'ID' }, { key: 'kecamatan', label: 'Kecamatan' }, { key: 'kabkot', label: 'Kab/Kota' }, { key: 'VALUE', label: 'Indeks Sosial' }, { key: 'kategori', label: 'Kategori' }],
+                'RSTVI-Ekonomi': [{ key: 'id', label: 'ID' }, { key: 'kecamatan', label: 'Kecamatan' }, { key: 'kabkot', label: 'Kab/Kota' }, { key: 'VALUE', label: 'Indeks Ekonomi' }, { key: 'kategori', label: 'Kategori' }],
+                'RSTVI-Desa': [{ key: 'DESA', label: 'Desa' }, { key: 'KECAMATAN', label: 'Kecamatan' }, { key: 'KAB_KOTA', label: 'Kab/Kota' }, { key: 'VALUE', label: 'Indeks' }, { key: 'kategori', label: 'Kategori' }],
+                'RSTVI-Kecamatan': [{ key: 'Kecamatan', label: 'Kecamatan' }, { key: 'Kab_Kota', label: 'Kab/Kota' }, { key: 'VALUE', label: 'Indeks' }, { key: 'kategori', label: 'Kategori' }],
+                'RSTVI-Kabkot': [{ key: 'NAMOBJ', label: 'Kab/Kota' }, { key: 'VALUE', label: 'Indeks' }, { key: 'kategori', label: 'Kategori' }],
+                'Estimasi-Grid': [{ key: 'id', label: 'ID' }, { key: 'kecamatan', label: 'Kecamatan' }, { key: 'kabkot', label: 'Kab/Kota' }, { key: 'VALUE', label: 'Estimasi' }, { key: 'kategori', label: 'Kategori' }],
+                'Estimasi-Desa': [{ key: 'DESA', label: 'Desa' }, { key: 'KECAMATAN', label: 'Kecamatan' }, { key: 'KAB_KOTA', label: 'Kab/Kota' }, { key: 'VALUE', label: 'Estimasi' }, { key: 'kategori', label: 'Kategori' }],
+                'Estimasi-Kecamatan': [{ key: 'Kecamatan', label: 'Kecamatan' }, { key: 'kabkot', label: 'Kab/Kota' }, { key: 'VALUE', label: 'Estimasi' }, { key: 'kategori', label: 'Kategori' }],
+                'Estimasi-Kabkot': [{ key: 'NAMOBJ', label: 'Kab/Kota' }, { key: 'VALUE', label: 'Estimasi' }, { key: 'kategori', label: 'Kategori' }],
+            };
+            // 3. Fungsi-fungsi Generik
+            function getStyle(feature) {
+                const value = feature.properties[currentState.year] || feature.properties['2023'];
+                let breaks, colors;
+
+                if (currentState.type === 'Estimasi') {
+                    breaks = [25, 50, 75, 100];
+                } else { // Asumsi RSTVI
+                    breaks = [0.2, 0.4, 0.6, 0.8];
+                }
+                colors = ['#1a9641', '#a6d96a', '#ffffbf', '#fdae61', '#d7191c'];
+
+                for (let i = 0; i < breaks.length; i++) {
+                    if (value <= breaks[i]) return { fillColor: colors[i], fillOpacity: 1.0, color: '#232323', weight: 1 };
+                }
+                return { fillColor: colors[colors.length - 1], fillOpacity: 1.0, color: '#232323', weight: 1 };
+            }
+
+            function onEachFeature(feature, layer) {
+                layer.on({
+                    mouseover: e => e.target.setStyle({ weight: 3, color: '#ffff00', fillColor: '#ffff00', fillOpacity: 1.0 }),
+                    mouseout: e => { if (activeLayer) activeLayer.resetStyle(e.target); }
+                });
+
+                const props = feature.properties;
+                let popupContent = '<table>';
+                const year = currentState.year;
+
+                // Menentukan kolom yang akan ditampilkan di popup
+                const popupFields = {
+                    'Estimasi-Kabkot': ['NAMOBJ', year],
+                    'Estimasi-Kecamatan': ['Kecamatan', 'kabkot', year],
+                    'Estimasi-Desa': ['DESA', 'KECAMATAN', 'KAB_KOTA', year],
+                    'Estimasi-Grid': ['id', 'kecamatan', 'kabkot', year],
+                    'RSTVI-Kabkot': ['NAMOBJ', year],
+                    'RSTVI-Kecamatan': ['Kecamatan', 'Kab_Kota', year],
+                    'RSTVI-Desa': ['DESA', 'KECAMATAN', 'KAB_KOTA', year],
+                    'RSTVI-Grid': ['id', 'kecamatan', 'kabkot', year],
+                    'RSTVI-Lingkungan': ['id', 'kecamatan', 'kabkot', year],
+                    'RSTVI-Sosial': ['id', 'kecamatan', 'kabkot', year],
+                    'RSTVI-Ekonomi': ['id', 'kecamatan', 'kabkot', year]
+                };
+
+                const key = `${currentState.type}-${currentState.level}`;
+                const fields = popupFields[key] || Object.keys(props);
+
+                fields.forEach(field => {
+                    if (props.hasOwnProperty(field) && props[field] !== null) {
+                        popupContent += `<tr><th>${field}</th><td>${autolinker.link(String(props[field]))}</td></tr>`;
+                    }
+                });
+
+                popupContent += '</table>';
+                layer.bindPopup(popupContent, { maxHeight: 400 });
+            }
+
+            // 4. Logika Utama
+            // GANTI SELURUH FUNGSI LAMA DENGAN VERSI FINAL INI
+            // GANTI SELURUH FUNGSI updateMapLayer LAMA DENGAN VERSI FINAL INI
+            function updateMapLayer() {
+                if (!currentState.type || !currentState.level || !currentState.year) return;
+                if (activeLayer) map.removeLayer(activeLayer);
+
+                const data = dataRegistry[currentState.type]?.[currentState.level]?.[currentState.year];
+
+                if (data && data.features) {
+
+                    // --- PERBAIKAN FINAL PADA FILTER ---
+
+                    // 1. "Pagar" geografis diperluas untuk mencakup area yang lebih besar, untuk keamanan.
+                    const saneBounds = {
+                        minLng: 108.0, maxLng: 112.0, // Area diperluas
+                        minLat: -9.0, maxLat: -6.5  // Area diperluas
+                    };
+
+                    // 2. Fungsi "pintar" untuk mengambil sampel koordinat pertama dari berbagai jenis geometri.
+                    const getFirstCoordinate = (geometry) => {
+                        if (!geometry || !geometry.type || !geometry.coordinates || geometry.coordinates.length === 0) {
+                            return null;
+                        }
+                        // Logika ini akan mencari koordinat terdalam pertama
+                        let coord = geometry.coordinates;
+                        while (Array.isArray(coord) && Array.isArray(coord[0])) {
+                            coord = coord[0];
+                        }
+                        return Array.isArray(coord) && typeof coord[0] === 'number' ? coord : null;
+                    };
+
+                    // 3. Saring (filter) fitur menggunakan fungsi pintar di atas.
+                    const cleanedFeatures = data.features.filter(feature => {
+                        try {
+                            const firstCoord = getFirstCoordinate(feature.geometry);
+                            if (!firstCoord) return false; // Abaikan jika tidak bisa dapat koordinat
+
+                            const lng = parseFloat(firstCoord[0]);
+                            const lat = parseFloat(firstCoord[1]);
+
+                            if (isNaN(lng) || isNaN(lat)) return false;
+
+                            return (lng >= saneBounds.minLng && lng <= saneBounds.maxLng &&
+                                lat >= saneBounds.minLat && lat <= saneBounds.maxLat);
+                        } catch (e) {
+                            console.error("Gagal memproses fitur:", feature, e);
+                            return false;
+                        }
+                    });
+
+                    const cleanedData = {
+                        type: "FeatureCollection",
+                        features: cleanedFeatures,
+                        crs: data.crs
+                    };
+
+                    if (cleanedData.features.length > 0) {
+                        activeLayer = L.geoJson(cleanedData, { style: getStyle, onEachFeature: onEachFeature });
+                        map.addLayer(activeLayer);
+                        //map.fitBounds(activeLayer.getBounds());
+                        map.setView([-7.79, 110.36], 10);
+                        updateDashboardUI();
+
+                        currentFeatures = cleanedData.features;
+                        renderDataTable();
+                    } else {
+                        console.warn("Peringatan: Semua fitur pada layer ini berada di luar batas wajar dan telah disaring.", data);
+                        document.getElementById('map-title').innerText = 'Data layer ini bermasalah (koordinat tidak wajar).';
+                        currentFeatures = [];
+                        renderDataTable();
+                    }
+
+                } else {
+                    document.getElementById('map-title').innerText = 'Data tidak tersedia untuk kombinasi ini.';
+                    currentFeatures = [];
+                    renderDataTable();
+                }
+            }
+            function updateDashboardUI() {
+                document.getElementById('info-toggle').style.display = 'block';
+                const levelNameElement = document.querySelector(`[data-type="${currentState.type}"][data-level="${currentState.level}"]`);
+                const levelName = levelNameElement ? levelNameElement.textContent.trim() : currentState.level;
+                const typeName = currentState.type === 'RSTVI' ? 'Indeks Kerentanan TB' : 'Estimasi Prevalensi TB';
+
+                document.getElementById('map-title').innerText = `${typeName} - ${levelName}`;
+
+                const legendContentDiv = document.getElementById('legend-content');
+                const statsContentDiv = document.getElementById('stats-content');
+
+                let breaks, colors, labels;
+                if (currentState.type === 'Estimasi') {
+                    breaks = [0, 25, 50, 75, 100, Infinity];
+                    colors = ['#1a9641', '#a6d96a', '#ffffbf', '#fdae61', '#d7191c'];
+                    labels = ['Sangat Rendah (<25)', 'Rendah (25-50)', 'Sedang (50-75)', 'Tinggi (75-100)', 'Sangat Tinggi (>100)'];
+                } else { // Asumsi RSTVI
+                    breaks = [0, 0.2, 0.4, 0.6, 0.8, 1.01];
+                    colors = ['#1a9641', '#a6d96a', '#ffffbf', '#fdae61', '#d7191c'];
+                    labels = ['Sangat Rendah (0-0.2)', 'Rendah (0.2-0.4)', 'Sedang (0.4-0.6)', 'Tinggi (0.6-0.8)', 'Sangat Tinggi (0.8-1.0)'];
+                }
+
+                let legendHtml = '<table>';
+                for (let i = 0; i < colors.length; i++) {
+                    legendHtml += `<tr><td style="background-color: ${colors[i]}; width: 20px; height: 20px; border: 1px solid #000;"></td><td>${labels[i]}</td></tr>`;
+                }
+                legendHtml += '</table>';
+                legendContentDiv.innerHTML = legendHtml;
+
+                let stats = labels.map(label => ({ label: label, count: 0 }));
+                if (activeLayer) {
+                    activeLayer.eachLayer(layer => {
+                        const value = layer.feature.properties[currentState.year] || layer.feature.properties['2023'];
+                        for (let i = 0; i < breaks.length - 1; i++) {
+                            if (value >= breaks[i] && value < breaks[i + 1]) {
+                                stats[i].count++;
+                                break;
+                            }
+                        }
+                    });
+                }
+
+                let statsHtml = '<ul class="stat-list">';
+                stats.forEach((stat, index) => {
+                    statsHtml += `<li style="background-color: ${colors[index].replace(/,1.0\)/, ',0.2)')}"><span class="cat-name">${stat.label}</span><span class="cat-count">${stat.count} area</span></li>`;
+                });
+                statsHtml += '</ul>';
+                statsContentDiv.innerHTML = statsHtml;
+            }
+            function getCategoryName(value, type) {
+                if (type === 'Estimasi') {
+                    if (value <= 25) return 'Sangat Rendah';
+                    if (value <= 50) return 'Rendah';
+                    if (value <= 75) return 'Sedang';
+                    if (value <= 100) return 'Tinggi';
+                    return 'Sangat Tinggi';
+                } else { // RSTVI
+                    if (value <= 0.2) return 'Sangat Rendah';
+                    if (value <= 0.4) return 'Rendah';
+                    if (value <= 0.6) return 'Sedang';
+                    if (value <= 0.8) return 'Tinggi';
+                    return 'Sangat Tinggi';
+                }
+            };
+            // GANTI SELURUH FUNGSI LAMA DENGAN VERSI FINAL INI
+            function renderDataTable() {
+                const tableHead = document.querySelector('#data-table thead');
+                const tableBody = document.querySelector('#data-table tbody');
+                tableHead.innerHTML = '';
+                tableBody.innerHTML = '';
+
+                if (!currentState.type || !currentState.level || currentFeatures.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px;">Data tidak tersedia. Silakan pilih layer dari menu.</td></tr>`;
+                    return;
+                }
+
+                // Menggunakan kunci gabungan yang benar
+                const configKey = `${currentState.type}-${currentState.level}`;
+                const headers = tableColumnConfig[configKey];
+
+                // Pengaman jika konfigurasi tidak ditemukan
+                if (!headers) {
+                    console.error("Tidak ada konfigurasi tabel untuk kunci:", configKey);
+                    tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px;">Error: Konfigurasi tabel tidak ditemukan.</td></tr>`;
+                    return;
+                }
+
+                const headerRow = document.createElement('tr');
+                headers.forEach((h, index) => {
+                    const th = document.createElement('th');
+                    th.textContent = h.label;
+                    th.dataset.columnIndex = index;
+                    headerRow.appendChild(th);
+                });
+                tableHead.appendChild(headerRow);
+
+                currentFeatures.forEach(feature => {
+                    const props = feature.properties;
+                    const row = document.createElement('tr');
+                    headers.forEach(h => {
+                        const cell = document.createElement('td');
+                        let value;
+
+                        // Logika untuk membuat kolom dinamis 'kategori' dan 'VALUE'
+                        if (h.key === 'kategori') {
+                            const numericValue = props[currentState.year] || 0;
+                            value = getCategoryName(numericValue, currentState.type);
+                        } else if (h.key === 'VALUE') {
+                            // 'VALUE' adalah placeholder untuk nilai dari tahun yang aktif
+                            value = props[currentState.year];
+                        } else {
+                            // Mengambil data dari properti lain seperti 'id', 'kecamatan', dll.
+                            value = props[h.key];
+                        }
+                        cell.textContent = (value === null || value === undefined) ? '-' : value;
+                        row.appendChild(cell);
+                    });
+                    tableBody.appendChild(row);
+                });
+            }
+            // 5. Event Listeners
+            document.querySelectorAll('.tab-link').forEach(tab => {
+                tab.addEventListener('click', function () {
+                    // TAMBAHKAN TANDA TANYA (?) DI SINI
+                    document.querySelector('.tab-link.active')?.classList.remove('active');
+
+                    // DAN TAMBAHKAN TANDA TANYA (?) DI SINI
+                    document.querySelector('.view-content.active')?.classList.remove('active');
+
+                    this.classList.add('active');
+                    const viewId = this.dataset.view + '-container';
+                    document.getElementById(viewId).classList.add('active');
+                    if (this.dataset.view === 'map') {
+                        setTimeout(() => map.invalidateSize(), 10);
+                    }
+                });
+            });
+            document.getElementById('custom-menu').addEventListener('click', function (e) {
+                const link = e.target.closest('a');
+                if (!link) return;
+                e.preventDefault();
+
+                if (link.classList.contains('menu-toggle')) {
+                    link.classList.toggle('open');
+                    link.nextElementSibling.classList.toggle('open');
+                } else if (link.dataset.type && link.dataset.level) {
+                    currentState.type = link.dataset.type;
+                    currentState.level = link.dataset.level;
+                    if (activeMenuItem) activeMenuItem.classList.remove('active');
+                    link.classList.add('active');
+                    activeMenuItem = link;
+                    updateMapLayer();
+                }
+            });
+
+            document.getElementById('year-selector').addEventListener('change', e => {
+                currentState.year = e.target.value;
+                if (currentState.type && currentState.level) updateMapLayer();
+            });
+
+            document.getElementById('sidebar-toggle').addEventListener('click', () => {
+                document.getElementById('sidebar').classList.toggle('closed');
+                setTimeout(() => map.invalidateSize(), 310);
+            });
+
+            document.getElementById('info-toggle').addEventListener('click', () => {
+                document.getElementById('info-panel').classList.toggle('hidden');
+            });
+
+            document.getElementById('info-panel-close').addEventListener('click', () => {
+                document.getElementById('info-panel').classList.add('hidden');
+            });
+            document.getElementById('download-excel-btn').addEventListener('click', function () {
+                const table = document.getElementById('data-table');
+                if (!table.querySelector('th')) {
+                    alert("Tidak ada data untuk diunduh.");
+                    return;
+                }
+                let csv = [];
+                table.querySelectorAll('tr').forEach(row => {
+                    let rowData = [];
+                    row.querySelectorAll('th, td').forEach(cell => {
+                        rowData.push('"' + cell.textContent.replace(/"/g, '""') + '"');
+                    });
+                    csv.push(rowData.join(','));
+                });
+                const blob = new Blob(["\uFEFF" + csv.join('\n')], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.setAttribute('href', URL.createObjectURL(blob));
+                const fileName = `${currentState.type || 'data'}_${currentState.level || ''}_${currentState.year}.csv`;
+                link.setAttribute('download', fileName);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+
+            document.querySelector('#data-table thead').addEventListener('click', function (e) {
+                const th = e.target.closest('th');
+                if (!th) return;
+                const tbody = th.closest('table').querySelector('tbody');
+                const columnIndex = parseInt(th.dataset.columnIndex);
+                const isAsc = th.classList.contains('sort-desc');
+                document.querySelectorAll('#data-table th').forEach(h => h.classList.remove('sort-asc', 'sort-desc'));
+                th.classList.toggle('sort-asc', isAsc);
+                th.classList.toggle('sort-desc', !isAsc);
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+                rows.sort((a, b) => {
+                    let valA = a.children[columnIndex].textContent.trim();
+                    let valB = b.children[columnIndex].textContent.trim();
+                    const numA = parseFloat(valA);
+                    const numB = parseFloat(valB);
+                    if (!isNaN(numA) && !isNaN(numB)) {
+                        return isAsc ? numA - numB : numB - numA;
+                    }
+                    return isAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                });
+                rows.forEach(row => tbody.appendChild(row));
+            });
+            document.getElementById('search-input').addEventListener('input', function () {
+                const searchTerm = this.value.toLowerCase();
+                const tableBody = document.querySelector('#data-table tbody');
+                const rows = tableBody.querySelectorAll('tr');
+
+                rows.forEach(row => {
+                    const rowText = row.textContent.toLowerCase();
+                    // Cek apakah teks baris mengandung kata kunci pencarian
+                    if (rowText.includes(searchTerm)) {
+                        row.style.display = ''; // Tampilkan baris jika cocok
+                    } else {
+                        row.style.display = 'none'; // Sembunyikan baris jika tidak cocok
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

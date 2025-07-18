@@ -1,0 +1,536 @@
+/* ==========================================================================
+   1. Pengaturan Dasar & Variabel Warna
+   ========================================================================== */
+:root {
+    --header-bg: #ffffff;
+    --sidebar-bg: #f5f7fa;
+    --accent-color: #007bff;
+    --active-nav-color: #0056b3;
+    --text-color: #34495e;
+    --text-color-light: #7f8c8d;
+    --light-gray: #ecf0f1;
+    --border-color: #e0e0e0;
+}
+
+html,
+body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    color: var(--text-color);
+}
+
+
+/* ==========================================================================
+   2. Layout Utama (Header, Sidebar, Konten)
+   ========================================================================== */
+#app-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+header {
+    background-color: var(--header-bg);
+    padding: 0 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--border-color);
+    z-index: 1010;
+}
+
+#sidebar {
+    width: 300px;
+    background-color: var(--sidebar-bg);
+    flex-shrink: 0;
+    transition: width 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border-color);
+}
+
+#main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+#content-wrapper {
+    flex-grow: 1;
+    position: relative;
+}
+
+
+/* ==========================================================================
+   3. Komponen Header
+   ========================================================================== */
+.logo-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+header .logo img {
+    height: 40px;
+}
+
+header h1 {
+    font-size: 1.1em;
+    font-weight: 600;
+    margin: 0;
+}
+
+header nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+}
+
+header nav a {
+    text-decoration: none;
+    color: var(--text-color-light);
+    font-weight: 500;
+    font-size: 0.9em;
+    padding: 20px 5px;
+    border-bottom: 3px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+header nav a:hover {
+    color: var(--text-color);
+}
+
+header nav a.active {
+    color: var(--active-nav-color);
+    border-bottom: 3px solid var(--active-nav-color);
+}
+
+
+/* ==========================================================================
+   4. Komponen Sidebar & Menu
+   ========================================================================== */
+#sidebar-content {
+    padding: 15px;
+    overflow-y: auto;
+    flex-grow: 1;
+    opacity: 1;
+    transition: opacity 0.1s;
+}
+
+#sidebar.closed {
+    width: 0;
+    border-right: none;
+    overflow: hidden;
+}
+
+#sidebar.closed #sidebar-content {
+    opacity: 0;
+    padding: 0;
+}
+
+#sidebar-toggle {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 45px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    cursor: pointer;
+    z-index: 1002;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: left 0.3s ease-in-out;
+}
+
+#sidebar.closed+#content-wrapper #sidebar-toggle {
+    left: 0;
+}
+
+#custom-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#custom-menu li {
+    margin-bottom: 5px;
+}
+
+#custom-menu a {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: var(--text-color);
+    border-radius: 5px;
+}
+
+#custom-menu i.fa,
+#custom-menu i.fas {
+    width: 20px;
+    text-align: center;
+    margin-right: 10px;
+    color: var(--text-color-light);
+}
+
+#custom-menu a.menu-toggle {
+    font-weight: 600;
+    background-color: var(--light-gray);
+}
+
+#custom-menu .sub-menu {
+    list-style: none;
+    padding-left: 20px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+#custom-menu .sub-menu.open {
+    max-height: 500px;
+}
+
+#custom-menu .sub-menu a {
+    font-size: 0.9em;
+    font-weight: 400;
+    border-left: 3px solid transparent;
+}
+
+#custom-menu .sub-menu a:hover {
+    background-color: #eaf2f8;
+    border-left-color: var(--accent-color);
+}
+
+#custom-menu .sub-menu a.active {
+    background-color: var(--accent-color);
+    color: white;
+    font-weight: 500;
+    border-left-color: var(--accent-color);
+}
+
+#custom-menu .sub-menu a.active i.fa,
+#custom-menu .sub-menu a.active i.fas {
+    color: white;
+}
+
+
+/* ==========================================================================
+   5. Komponen Peta (Map)
+   ========================================================================== */
+#map {
+    width: 100%;
+    height: 100%;
+}
+
+.floating-panel {
+    position: absolute;
+    z-index: 1001;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(5px);
+}
+
+#map-header {
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    padding: 8px 15px;
+}
+
+#map-title {
+    font-weight: 500;
+    align-items: center;
+}
+
+#year-selector {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 4px;
+    background-color: white;
+}
+
+
+/* ==========================================================================
+   6. Panel Info Peta
+   ========================================================================== */
+#info-toggle {
+    top: 15px;
+    right: 15px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    display: none;
+    position: absolute;
+    z-index: 1000;
+    /* Awalnya disembunyikan, diatur oleh JS */
+}
+
+#info-toggle .fa-info {
+    font-size: 10px;
+}
+
+#info-panel {
+    top: 50 px;
+    right: 12px;
+    width: 320px;
+    max-height: calc(100vh - 150px);
+    display: flex;
+    flex-direction: column;
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+#info-panel.hidden {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+    pointer-events: none;
+}
+
+#info-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 10px;
+    border-bottom: 1px solid var(--border-color);
+    background-color: #f8f8f8;
+}
+
+#info-panel-header h3 {
+    margin: 0;
+    font-size: 1em;
+}
+
+#info-panel-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    color: #aaa;
+    transition: color 0.2s;
+}
+
+#info-panel-close:hover {
+    color: #333;
+}
+
+#info-panel-content {
+    padding: 12px;
+    overflow-y: auto;
+}
+
+.info-section h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+    font-size: 0.95em;
+}
+
+.info-section:not(:first-child) {
+    margin-top: 12px;
+}
+
+.stat-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.stat-list li {
+    margin-bottom: 5px;
+    padding: 8px 10px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9em;
+}
+
+.stat-list .cat-name {
+    font-weight: 500;
+}
+
+.stat-list .cat-count {
+    font-family: monospace;
+    font-weight: 600;
+}
+
+/* Pewarnaan Kategori Statistik */
+.stat-list .c1 {
+    background-color: #e8f5e9;
+    color: #1b5e20;
+}
+
+.stat-list .c2 {
+    background-color: #f1f8e9;
+    color: #558b2f;
+}
+
+.stat-list .c3 {
+    background-color: #fffde7;
+    color: #f57f17;
+}
+
+.stat-list .c4 {
+    background-color: #fff3e0;
+    color: #d84315;
+}
+
+.stat-list .c5 {
+    background-color: #ffebee;
+    color: #b71c1c;
+}
+
+
+/* ==========================================================================
+   7. Sistem Tab & Tabel Data
+   ========================================================================== */
+.view-tabs {
+    padding: 0 15px;
+    background-color: var(--header-bg);
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.tab-link {
+    background: none;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--text-color-light);
+    border-bottom: 3px solid transparent;
+}
+
+.tab-link.active {
+    color: var(--accent-color);
+    border-bottom-color: var(--accent-color);
+    font-weight: bold;
+}
+
+.view-content {
+    display: none;
+    flex-grow: 1;
+}
+
+.view-content.active {
+    display: flex;
+    flex-direction: column;
+}
+
+#data-container {
+    padding: 15px;
+    overflow: hidden;
+    /* Mencegah scroll di luar wrapper */
+    background-color: #fff;
+}
+
+.table-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-shrink: 0;
+}
+
+#download-excel-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#download-excel-btn:hover {
+    background-color: #218838;
+}
+
+#search-input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 300px;
+}
+
+.table-wrapper {
+    overflow: auto;
+    /* Scroll hanya pada area ini */
+    flex-grow: 1;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+}
+
+#data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#data-table thead {
+    position: sticky;
+    top: 0;
+    background-color: var(--sidebar-bg);
+    z-index: 1;
+}
+
+#data-table th,
+#data-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+    white-space: nowrap;
+}
+
+#data-table th {
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#data-table th:hover {
+    background-color: #e2e6ea;
+}
+
+#data-table th.sort-asc::after {
+    content: ' ▲';
+}
+
+#data-table th.sort-desc::after {
+    content: ' ▼';
+}
+
+#data-table tr:nth-child(even) {
+    background-color: #fdfdfd;
+}
+
+#data-table tr:hover {
+    background-color: #f1f1f1;
+}
