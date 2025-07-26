@@ -839,7 +839,7 @@
       document.getElementById('level-select').addEventListener('change', function () {
         const downloadLink = document.getElementById('download-template');
         if (this.value) {
-          downloadLink.href = `template/template_${this.value}.xlsx`;
+          downloadLink.href = `template/template_${this.value}.zip`;
           downloadLink.style.display = 'block';
         } else {
           downloadLink.style.display = 'none';
